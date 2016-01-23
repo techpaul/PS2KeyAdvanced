@@ -1,0 +1,9 @@
+name=PS2KeyAdvanced
+version=1.0.2
+author=Paul Carpenter <paul@pcserviceselectronics.co.uk>
+maintainer=Paul Carpenter <paul@pcserviceselectronics.co.uk>
+sentence=PS2 keyboard FULL control and ALL keys processing, as well as LED control.
+paragraph=Provides ability to convert long key stroke code sequences to a single integer, for all keys ANY Latin keyboard, even multimedia and 24 Function key keyboards.
+category=Other
+url=https://github.com/techpaul/PS2KeyAdvanced.git
+architectures=avr,sam

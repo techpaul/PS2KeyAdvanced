@@ -1,0 +1,16 @@
+Some URLs of useful technical sites that give you the inner workings details
+of the PS2 Keyboard interface, not in any order, many have pictures on -
+
+PS2 Interface, Keyboard and scan codes
+
+https://en.wikipedia.org/wiki/PS/2_port
+http://www.computer-engineering.org/ps2keyboard/
+http://computer-engineering.org/ps2protocol/
+http://retired.beyondlogic.org/keyboard/keybrd.htm
+http://wiki.osdev.org/PS/2_Keyboard
+
+UTF-8
+http://www.utf8-chartable.de/unicode-utf8-table.pl?utf8=char
+
+Old Arduino site library page
+http://playground.arduino.cc/Main/PS2Keyboard
