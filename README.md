@@ -69,7 +69,7 @@ Returns any keypress as 16 bit integer, which includes a coded value for the key
 
 ###Installation
 
-Perfoemed by standard zip file library inclusion into Arduino IDE
+Performed by standard zip file library inclusion into Arduino IDE
 
 ###Examples
 
