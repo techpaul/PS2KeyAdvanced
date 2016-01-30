@@ -104,10 +104,10 @@ Also example of strings and string array in flash memory
 #define RS  12
 #define ENA 11
 #define RW  10
-#define D7   7
+#define D7   9
 #define D6   8
-#define D5   9
-#define D4  10
+#define D5   7
+#define D4   6
 
 /* LCD Constants to match your display */
 /* Columns in display */
@@ -123,10 +123,11 @@ int8_t rows = 0;
 /* Key codes and strings for keys producing a string */
 /* three arrays in same order ( keycode, string to display, length of string ) */
 #if defined(ARDUINO_ARCH_AVR)
-const uint8_t codes[] PROGMEM = { PS2_KEY_TAB, PS2_KEY_ESC, PS2_KEY_DELETE,
+const uint8_t codes[] PROGMEM = { PS2_KEY_SPACE, PS2_KEY_TAB, PS2_KEY_ESC, PS2_KEY_DELETE,
                                    PS2_KEY_F1, PS2_KEY_F2, PS2_KEY_F3, PS2_KEY_F4,
                                    PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7, PS2_KEY_F8,
                                    PS2_KEY_F9, PS2_KEY_F10, PS2_KEY_F11, PS2_KEY_F12 };
+const char spacestr[] PROGMEM  = " ";
 const char tabstr[] PROGMEM  = "[Tab]";
 const char escstr[] PROGMEM  = "[ESC]";
 const char delstr[] PROGMEM  = "[Del]";
@@ -143,20 +144,25 @@ const char f10str[] PROGMEM  = "[F10]";
 const char f11str[] PROGMEM  = "[F11]";
 const char f12str[] PROGMEM  = "[F12]";
 
-const int8_t sizes[] PROGMEM = { 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
+// Due to AVR Harvard architecture array of string pointers to actual strings
 const char *const keys[] PROGMEM =  {
-                                tabstr, escstr, delstr, f1str, f2str, f3str,
-                                f4str, f5str, f6str, f7str, f8str,
+                                spacestr, tabstr, escstr, delstr, f1str, f2str,
+                                f3str, f4str, f5str, f6str, f7str, f8str,
                                 f9str, f10str, f11str, f12str };
+const int8_t sizes[] PROGMEM = { 1, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
 char buffer[ 8 ];
+
 #elif defined(ARDUINO_ARCH_SAM)
-const uint8_t codes[] = { PS2_KEY_TAB, PS2_KEY_ESC, PS2_KEY_DELETE, PS2_KEY_F1, PS2_KEY_F2,
-                          PS2_KEY_F3, PS2_KEY_F4, PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7,
-                          PS2_KEY_F8, PS2_KEY_F9, PS2_KEY_F10, PS2_KEY_F11, PS2_KEY_F12 };
-const char *const keys[]  =  { "[Tab]", "[ESC]", "[Del]", "[F1]", "[F2]", "[F3]",
+const uint8_t codes[] = { PS2_KEY_SPACE, PS2_KEY_TAB, PS2_KEY_ESC,
+                          PS2_KEY_DELETE, PS2_KEY_F1, PS2_KEY_F2, PS2_KEY_F3,
+                          PS2_KEY_F4, PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7,
+                          PS2_KEY_F8, PS2_KEY_F9, PS2_KEY_F10, PS2_KEY_F11,
+                          PS2_KEY_F12 };
+const char *const keys[]  =  { " ", "[Tab]", "[ESC]", "[Del]", "[F1]", "[F2]", "[F3]",
                                "[F4]", "[F5]", "[F6]", "[F7]", "[F8]",
                                "[F9]", "[F10]", "[F11]", "[F12]" };
-const int8_t sizes[]  = { 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
+const int8_t sizes[]  = { 1, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
+
 #else
   #error “This library only supports boards with an AVR or SAM processor.”
 #endif
@@ -231,6 +237,7 @@ if( keyboard.available() )
     switch( c )                     /* Cursor movements */
       {
       case PS2_KEY_ENTER:           /* Cursor to beginning of next line or start */
+     case PS2_KEY_KP_ENTER:
                 cols = 0;
                 rows++;
                 if( rows >= MAX_ROW )

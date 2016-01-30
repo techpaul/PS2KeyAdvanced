@@ -760,9 +760,9 @@ if( retdata > 0 )
           PS2_keystatus |= index;
       }
     else
-      // Numeric keypad ONLY works in numlock state
+      // Numeric keypad ONLY works in numlock state or when _SHIFT status
       if( retdata >= PS2_KEY_KP0 && retdata <=  PS2_KEY_KP_DOT )
-        if( !( PS2_led_lock & PS2_LOCK_NUM ) )
+        if( !( PS2_led_lock & PS2_LOCK_NUM ) || ( PS2_keystatus & _SHIFT ) )
 #if defined(ARDUINO_ARCH_AVR)
           retdata = pgm_read_byte( &scroll_remap[ retdata - PS2_KEY_KP0 ] );
 #elif defined(ARDUINO_ARCH_SAM)
