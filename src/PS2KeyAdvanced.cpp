@@ -399,7 +399,9 @@ _bitcount++;               // Now point to next bit
 switch( _bitcount )
   {
   case 1: // Start bit due to Arduino bug
-          digitalWrite( PS2_DataPin, ( LOW ) );
+          digitalWrite( PS2_DataPin, LOW );
+          pinMode( PS2_DataPin, OUTPUT );
+          
           break;
   case 2:
   case 3:
@@ -411,6 +413,11 @@ switch( _bitcount )
   case 9:
           // Data bits
           val = _shiftdata & 0x01;   // get LSB
+    if (val)
+        pininput( PS2_DataPin );
+    else 
+        pinMode( PS2_DataPin, OUTPUT );
+    
           digitalWrite( PS2_DataPin, val ); // send start bit //BUG SHOULD NOT WRITE HIGH ON OUT
           _parity += val;            // another one received ?
           _shiftdata >>= 1;          // right _SHIFT one place for next bit
@@ -470,10 +477,12 @@ if( !( _tx_ready & _HANDSHAKE ) && ( _tx_ready & _COMMAND ) )
   }
 
 // set pins to outputs and high //AND THEY GOT BURNED OUT, BECOUSE YOU ARE NOT ALLOWED TO SET THEM OUTPUT HIGH, ONLY PULLUP BY 5kom RESISTOR
-digitalWrite( PS2_DataPin, HIGH );
-pinMode( PS2_DataPin, OUTPUT );
-digitalWrite( PS2_IrqPin, HIGH );
-pinMode( PS2_IrqPin, OUTPUT );
+//digitalWrite( PS2_DataPin, HIGH );
+//pinMode( PS2_DataPin, INPUT_PULLUP );
+  pininput( PS2_DataPin );
+//digitalWrite( PS2_IrqPin, HIGH );
+//pinMode( PS2_IrqPin, INPUT_PULLUP );
+  pininput( PS2_IrqPin );
 delayMicroseconds( 10 );
 #if defined(ARDUINO_ARCH_SAM)
 // STOP interrupt handler as Due etc. a lot faster than Uno/Mega
@@ -482,10 +491,12 @@ detachInterrupt( digitalPinToInterrupt( PS2_IrqPin ) );
 #endif
 // set Clock LOW
 digitalWrite( PS2_IrqPin, LOW );
+  pinMode( PS2_IrqPin, OUTPUT );
 // set clock low for 60us
 delayMicroseconds( 60 );
 // Set data low - Start bit
 digitalWrite( PS2_DataPin, LOW );
+  pinMode( PS2_DataPin, OUTPUT );
 // set clock to input_pullup
 pininput( PS2_IrqPin );
 #if defined(ARDUINO_ARCH_SAM)
