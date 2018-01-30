@@ -411,7 +411,7 @@ switch( _bitcount )
   case 9:
           // Data bits
           val = _shiftdata & 0x01;   // get LSB
-          digitalWrite( PS2_DataPin, val ); // send start bit
+          digitalWrite( PS2_DataPin, val ); // send start bit //BUG SHOULD NOT WRITE HIGH ON OUT
           _parity += val;            // another one received ?
           _shiftdata >>= 1;          // right _SHIFT one place for next bit
           break;
@@ -469,7 +469,7 @@ if( !( _tx_ready & _HANDSHAKE ) && ( _tx_ready & _COMMAND ) )
   _ps2mode |= _WAIT_RESPONSE;
   }
 
-// set pins to outputs and high
+// set pins to outputs and high //AND THEY GOT BURNED OUT, BECOUSE YOU ARE NOT ALLOWED TO SET THEM OUTPUT HIGH, ONLY PULLUP BY 5kom RESISTOR
 digitalWrite( PS2_DataPin, HIGH );
 pinMode( PS2_DataPin, OUTPUT );
 digitalWrite( PS2_IrqPin, HIGH );
