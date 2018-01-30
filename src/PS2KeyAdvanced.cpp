@@ -415,9 +415,11 @@ switch( _bitcount )
           val = _shiftdata & 0x01;   // get LSB
     if (val)
         pininput( PS2_DataPin );
-    else 
+    else
+    {
+        digitalWrite( PS2_IrqPin, LOW );
         pinMode( PS2_DataPin, OUTPUT );
-    
+    }
           digitalWrite( PS2_DataPin, val ); // send start bit //BUG SHOULD NOT WRITE HIGH ON OUT
           _parity += val;            // another one received ?
           _shiftdata >>= 1;          // right _SHIFT one place for next bit
