@@ -1,5 +1,5 @@
 # PS2KeyAdvanced
-###Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
+## Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
 
 First Public Release Version V1.0.2
 
@@ -7,18 +7,18 @@ Smaller footprint than any others found and more functionality.
 
 For other versions that just read the keycodes for all keyboard types or allow you to get the full UTF-8 configurable for any LATIN keyboard with extra functions keys as simple codes see associated reporitories for PS2KeyAdvanced and PS2KeyMap libraries. Yes these libraries even provide codes for multimedia keys and Function keys F1 to F24 (yes that is F24).
 
-###Platforms
+### Platforms
 
     Arduino AVR - tested on Uno and Mega 2560
     Arduino SAM - tested on DUE
 
-###Test Environment
+### Test Environment
 
     All platforms versions of test R3 Hardware
     Arduino V1.6.7
     DUE Board Manager package V1.6.6
 
-##Important Hardware Notes
+## Important Hardware Notes
 
 1 Make sure you have data and clock wires connected correctly. Clock wire MUST be connected to an interrupt pin.
 
@@ -37,7 +37,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
 
 2 When using DUE or other boards with 3V3 I/O you MUST use a level translator FET or IC like Texas Instruments TXS0102 or similar as most keyboards not only operate at 5V but the two wire communications are pulled up by a resistor to 5V at the keyboard end.
 
-###Introduction
+### Introduction
 
 After looking round for suitable libraries I found most were lacking in functionality and high in code and data footprint, so I created a series of PS2 Keyboard libraries. This is the second which fully supports the PS2 Keyboard Protocol, even allowing you control of keyboard LEDs (some have 4 LEDs) and changing settings..
 
@@ -67,11 +67,11 @@ Returns any keypress as 16 bit integer, which includes a coded value for the key
     - Handles NUM, CAPS and SCROLL lock keys to LEDs
     - Handles NUM/SCROLL internally
 
-###Installation
+### Installation
 
 Performed by standard zip file library inclusion into Arduino IDE
 
-###Examples
+### Examples
 
 This library has THREE examples, from simplest to most complec -
 
@@ -80,7 +80,7 @@ This library has THREE examples, from simplest to most complec -
   - KeyToLCD - Example that will allow you to display keyboard actions on LCD connected to Arduino and allow cursor movements to move the cursor on LCD, whilst also displaying strings for keys like ESC, TAB, F1 to F12
   
 
-###Contributor and Author Details
+### Contributor and Author Details
 
 Author Paul Carpenter, PC Services
 
