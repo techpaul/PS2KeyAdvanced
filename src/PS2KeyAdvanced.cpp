@@ -935,15 +935,10 @@ while( i < ( _KEY_BUFF_SIZE - 1 ) ) // process if not full
       idx = _key_head + 1;         // point to next space
       if( idx >= _KEY_BUFF_SIZE )  // loop to front if necessary
         idx = 0;
-      if( idx != _key_tail )
-        {
-        _key_buffer[ idx ] = data; // save the data to out buffer
-        _key_head = idx;
-        i++;                      // update count
-        }
+      _key_buffer[ idx ] = data; // save the data to out buffer
+      _key_head = idx;
+      i++;                      // update count
       }
-    else
-      break;                    // exit buffer full
     }
   else
     break;                      // exit nothing coming in
