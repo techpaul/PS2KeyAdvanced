@@ -1,9 +1,10 @@
-/* Version V1.0.2
+/* Version V1.0.5
   PS2KeyCode.h - PS2KeyAdvanced library Internal actual PS2 key code sequences
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
   Created September 2014
   Updated January 2016 - Paul Carpenter - add tested on Due and tidy ups for V1.5 Library Management
+  Updated December 2019 - Paul Carpenter - Fix typo in code for Multimedia STOP
 
   PRIVATE to library
 
@@ -253,7 +254,7 @@
 #define PS2_KC_KP_DIV   0x4A
 #define PS2_KC_NEXT_TR  0X4D
 #define PS2_KC_PREV_TR  0X15
-#define PS2_KC_STOP     0X38
+#define PS2_KC_STOP     0X3B
 #define PS2_KC_PLAY     0X34
 #define PS2_KC_MUTE     0X23
 #define PS2_KC_VOL_UP   0X32

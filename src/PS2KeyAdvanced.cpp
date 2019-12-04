@@ -1,4 +1,4 @@
-/* Version V1.0.2
+/* Version V1.0.5
   PS2KeyAdvanced.cpp - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
