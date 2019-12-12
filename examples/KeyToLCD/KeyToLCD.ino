@@ -122,7 +122,7 @@ int8_t rows = 0;
 /*  messages constants */
 /* Key codes and strings for keys producing a string */
 /* three arrays in same order ( keycode, string to display, length of string ) */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 const uint8_t codes[] PROGMEM = { PS2_KEY_SPACE, PS2_KEY_TAB, PS2_KEY_ESC, PS2_KEY_DELETE,
                                    PS2_KEY_F1, PS2_KEY_F2, PS2_KEY_F3, PS2_KEY_F4,
                                    PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7, PS2_KEY_F8,
@@ -187,7 +187,7 @@ lcd.begin( MAX_COL, MAX_ROW );
 lcd.clear();                      // clear the screen
 lcd.cursor();                     // Enable Cursor
 lcd.blink();                      // Blinking cursor
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 lcd.print( F( "PC Services" ) );  // Display sign-on text
 lcd.setCursor( 0,1 );
 lcd.print( F( "Keyboard to LCD" ) );
@@ -312,14 +312,14 @@ if( keyboard.available() )
         if( c != PS2_KEY_EUROPE2 && ( c < PS2_KEY_KP0 || c >= PS2_KEY_F1 ) )
           {  // Non printable sort which ones we can print
           for( idx = 0; idx < sizeof( codes ); idx++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
           if( c == pgm_read_byte( codes + idx ) )
 #elif defined(ARDUINO_ARCH_SAM)
           if( c == codes[ idx ] )
 #endif
             {  /* String outputs */
             mode = 1;
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
             c = pgm_read_byte( sizes + idx );
 #elif defined(ARDUINO_ARCH_SAM)
             c = sizes[ idx ];
@@ -329,7 +329,7 @@ if( keyboard.available() )
             /* when cursor reset keep track */
             if( cols == 0 )
               cols = c;
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
             strcpy_P( buffer, (char*)pgm_read_word( &( keys[ idx ] ) ) );
             lcd.print( buffer );
 #elif defined(ARDUINO_ARCH_SAM)

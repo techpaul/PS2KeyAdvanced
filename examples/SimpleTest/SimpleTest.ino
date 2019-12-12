@@ -144,7 +144,7 @@ void setup()
 // Configure the keyboard library
 keyboard.begin( DATAPIN, IRQPIN );
 Serial.begin( 115200 );
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 Serial.println( F( "PS2 Advanced Key Simple Test:" ) );
 #elif defined(ARDUINO_ARCH_SAM)
 Serial.println( "PS2 Advanced Key Simple Test:" );
@@ -160,7 +160,7 @@ if( keyboard.available() )
   c = keyboard.read();
   if( c > 0 )
     {
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
     Serial.print( F( "Value " ) );
     Serial.print( c, HEX );
     Serial.print( F( " - Status Bits " ) );
