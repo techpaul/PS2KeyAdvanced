@@ -64,7 +64,7 @@
     In codes can only be 1 - 0x9F, plus 0xF2 and 0xF1
     Out Codes in range 1 to 0x9F
 */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 const uint8_t PROGMEM single_key[][ 2 ] = {
 #elif defined(ARDUINO_ARCH_SAM)
 const uint8_t single_key[][ 2 ] = {
@@ -183,7 +183,7 @@ const uint8_t single_key[][ 2 ] = {
                 };
 
 /* Two byte Key  table after an E0 byte received */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 const uint8_t PROGMEM extended_key[][ 2 ] = {
 #elif defined(ARDUINO_ARCH_SAM)
 const uint8_t extended_key[][ 2 ] = {
@@ -233,7 +233,7 @@ const uint8_t extended_key[][ 2 ] = {
 
 /* Scroll lock numeric keypad re-mappings for NOT NUMLOCK */
 /* in translated code order order is important */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 const uint8_t PROGMEM scroll_remap[] = {
 #elif defined(ARDUINO_ARCH_SAM)
 const uint8_t scroll_remap[] = {

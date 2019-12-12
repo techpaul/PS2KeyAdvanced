@@ -38,6 +38,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
       -  Teensy++ 2.0: 0, 1, 2, 3, 18, 19, 36, 37
       -  Teensy++ 1.0: 0, 1, 2, 3, 18, 19, 36, 37
       -  Sanguino: 2, 10, 11
+      -  ESP8622: All pins, except 16
 
 2. When using DUE or other boards with 3V3 I/O you MUST use a level translator FET or IC like Texas Instruments TXS0102 or similar as most keyboards not only operate at 5V but the two wire communications are pulled up by a resistor to 5V at the keyboard end.
 

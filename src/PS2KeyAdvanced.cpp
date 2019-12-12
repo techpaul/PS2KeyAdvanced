@@ -141,7 +141,7 @@ void set_lock( );
 
 /* Constant control functions to flags array
    in translated key code value order  */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
 const uint8_t PROGMEM control_flags[] = {
 #elif defined(ARDUINO_ARCH_SAM)
 const uint8_t control_flags[] = {
@@ -205,7 +205,11 @@ uint8_t PS2_keystatus;        // current CAPS etc status for top byte
    To receive 11 bits - start 8 data, ODD parity, stop
    To send data calls send_bit()
    Interrupt every falling incoming clock edge from keyboard */
+#if defined(ESP8266)
+void ICACHE_RAM_ATTR ps2interrupt( void )
+#else
 void ps2interrupt( void )
+#endif
 {
 if( _ps2mode & _TX_MODE )
   send_bit();
@@ -474,7 +478,9 @@ digitalWrite( PS2_DataPin, HIGH );
 pinMode( PS2_DataPin, OUTPUT );
 digitalWrite( PS2_IrqPin, HIGH );
 pinMode( PS2_IrqPin, OUTPUT );
+#if !defined(ESP8266)
 delayMicroseconds( 10 );
+#endif
 #if defined(ARDUINO_ARCH_SAM)
 // STOP interrupt handler as Due etc. a lot faster than Uno/Mega
 // Setting pin output low will cause interrupt before ready
@@ -482,8 +488,10 @@ detachInterrupt( digitalPinToInterrupt( PS2_IrqPin ) );
 #endif
 // set Clock LOW
 digitalWrite( PS2_IrqPin, LOW );
+#if !defined(ESP8266)
 // set clock low for 60us
 delayMicroseconds( 60 );
+#endif
 // Set data low - Start bit
 digitalWrite( PS2_DataPin, LOW );
 // set clock to input_pullup
@@ -668,7 +676,7 @@ if( index & _E0_MODE )
   {
   length = sizeof( extended_key ) / sizeof( extended_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
      if( data == pgm_read_byte( &extended_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &extended_key[ index ][ 1 ] );
@@ -684,7 +692,7 @@ else
   {
   length = sizeof( single_key ) / sizeof( single_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
      if( data == pgm_read_byte( &single_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &single_key[ index ][ 1 ] );
@@ -745,7 +753,7 @@ if( retdata > 0 )
   else
     if( retdata >= PS2_KEY_L_SHIFT && retdata <= PS2_KEY_R_GUI )
       { // Update bits for _SHIFT, _CTRL, _ALT, _ALT GR, _GUI in status
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
       index = pgm_read_byte( &control_flags[ retdata - PS2_KEY_L_SHIFT ] );
 #elif defined(ARDUINO_ARCH_SAM)
       index = control_flags[ retdata - PS2_KEY_L_SHIFT ];
@@ -763,7 +771,7 @@ if( retdata > 0 )
       // Numeric keypad ONLY works in numlock state or when _SHIFT status
       if( retdata >= PS2_KEY_KP0 && retdata <=  PS2_KEY_KP_DOT )
         if( !( PS2_led_lock & PS2_LOCK_NUM ) || ( PS2_keystatus & _SHIFT ) )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) || defined(ESP8266)
           retdata = pgm_read_byte( &scroll_remap[ retdata - PS2_KEY_KP0 ] );
 #elif defined(ARDUINO_ARCH_SAM)
           retdata = scroll_remap[ retdata - PS2_KEY_KP0 ];
@@ -873,6 +881,10 @@ send_byte( PS2_KC_RESET );            // send command
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data PS2_KC_BAT or PS2_KC_ERROR
   send_next();                   // if idle start transmission
+
+// LEDs and KeyStatus Reset too...
+PS2_led_lock = 0;
+PS2_keystatus = 0;
 }
 
 
