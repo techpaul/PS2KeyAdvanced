@@ -27,7 +27,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
 1. Make sure you have data and clock wires connected correctly. Clock wire MUST be connected to an interrupt pin.
 
   -  Do NOT use Pin 13 for either clock or data wires
-  -  PS2KeyRaw requires both pins specified for begin() as in keyboard.begin( data_pin, irq_pin );
+  -  PS2KeyAdvanced requires both pins specified for begin() as in keyboard.begin( data_pin, irq_pin );
   -  Valid irq pins:
       -  Arduino Uno: 2, 3
       -  Arduino Due: All pins, except 13 (LED)
@@ -38,7 +38,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
       -  Teensy++ 2.0: 0, 1, 2, 3, 18, 19, 36, 37
       -  Teensy++ 1.0: 0, 1, 2, 3, 18, 19, 36, 37
       -  Sanguino: 2, 10, 11
-      -  ESP8622: All pins, except 16
+      -  ESP8266: All pins, except 16
 
 2. When using DUE or other boards with 3V3 I/O you MUST use a level translator FET or IC like Texas Instruments TXS0102 or similar as most keyboards not only operate at 5V but the two wire communications are pulled up by a resistor to 5V at the keyboard end.
 
