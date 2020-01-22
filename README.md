@@ -27,7 +27,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
 1. Make sure you have data and clock wires connected correctly. Clock wire MUST be connected to an interrupt pin.
 
   -  Do NOT use Pin 13 for either clock or data wires
-  -  PS2KeyRaw requires both pins specified for begin() as in keyboard.begin( data_pin, irq_pin );
+  -  PS2KeyAdvanced requires both pins specified for begin() as in keyboard.begin( data_pin, irq_pin );
   -  Valid irq pins:
       -  Arduino Uno: 2, 3
       -  Arduino Due: All pins, except 13 (LED)
