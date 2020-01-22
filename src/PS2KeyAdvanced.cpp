@@ -1,9 +1,11 @@
-/* Version V1.0.5
+/* Version V1.0.6
   PS2KeyAdvanced.cpp - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
   Created September 2014
   Updated January 2016 - Paul Carpenter - add tested on Due and tidy ups for V1.5 Library Management
+    January 2020   Fix typos, correct keyboard reset status improve library.properties 
+		   and additional platform handling and some documentation
 
   IMPORTANT WARNING
  
@@ -17,6 +19,7 @@
     September 2014 Uno and Mega 2560 September 2014 using Arduino V1.6.0
     January 2016   Uno, Mega 2560 and Due using Arduino 1.6.7 and Due Board 
                     Manager V1.6.6
+                    
 
   Assumption - Only ONE keyboard added to one Arduino
              - No stream support
@@ -469,30 +472,28 @@ if( !( _tx_ready & _HANDSHAKE ) && ( _tx_ready & _COMMAND ) )
   _ps2mode |= _WAIT_RESPONSE;
   }
 
+// STOP interrupt handler 
+// Setting pin output low will cause interrupt before ready
+detachInterrupt( digitalPinToInterrupt( PS2_IrqPin ) );
 // set pins to outputs and high
 digitalWrite( PS2_DataPin, HIGH );
 pinMode( PS2_DataPin, OUTPUT );
 digitalWrite( PS2_IrqPin, HIGH );
 pinMode( PS2_IrqPin, OUTPUT );
+// Essential for PS2 spec compliance
 delayMicroseconds( 10 );
-#if defined(ARDUINO_ARCH_SAM)
-// STOP interrupt handler as Due etc. a lot faster than Uno/Mega
-// Setting pin output low will cause interrupt before ready
-detachInterrupt( digitalPinToInterrupt( PS2_IrqPin ) );
-#endif
 // set Clock LOW
 digitalWrite( PS2_IrqPin, LOW );
+// Essential for PS2 spec compliance
 // set clock low for 60us
 delayMicroseconds( 60 );
 // Set data low - Start bit
 digitalWrite( PS2_DataPin, LOW );
-// set clock to input_pullup
+// set clock to input_pullup data stays as output while writing to  keyboard
 pininput( PS2_IrqPin );
-#if defined(ARDUINO_ARCH_SAM)
-// Restart interrupt handler as Due etc. a lot faster than Uno/Mega
+// Restart interrupt handler
 attachInterrupt( digitalPinToInterrupt( PS2_IrqPin ), ps2interrupt, FALLING );
 //  wait clock interrupt to send data
-#endif
 }
 
 
@@ -872,7 +873,10 @@ void PS2KeyAdvanced::resetKey()
 send_byte( PS2_KC_RESET );            // send command
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data PS2_KC_BAT or PS2_KC_ERROR
-  send_next();                   // if idle start transmission
+  send_next();                        // if idle start transmission
+// LEDs and KeyStatus Reset too... to match keyboard
+PS2_led_lock = 0;
+PS2_keystatus = 0;
 }
 
 

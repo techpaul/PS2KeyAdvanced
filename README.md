@@ -1,7 +1,9 @@
 # PS2KeyAdvanced
 ## Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
+**V1.0.6** January 2020 - Fix typos, correct keyboard reset status improve library.properties 
+		   and additional platform handling
 
-**V1.0.4** Agust 2018 - Minor reduction in available() method to remove redundant extra safety checks on buffers
+V1.0.4 August 2018 - Minor reduction in available() method to remove redundant extra safety checks on buffers
 
 V1.0.3 July 2018 Improved keywords file
 
@@ -19,7 +21,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
 ### Test Environment
 
     All platforms versions of test R3 Hardware
-    Arduino V1.6.7
+    Arduino V1.6.7 and newer
     DUE Board Manager package V1.6.6
 
 ## Important Hardware Notes

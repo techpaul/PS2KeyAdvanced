@@ -1,9 +1,11 @@
-/* Version V1.0.5
+/* Version V1.0.6
   PS2KeyAdvanced.h - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
   Created September 2014
   Updated January 2016 - Paul Carpenter - add tested on Due and tidy ups for V1.5 Library Management
+    January 2020   Fix typos, correct keyboard reset status improve library.properties 
+		   and additional platform handling and some documentation
 
   IMPORTANT WARNING
  
