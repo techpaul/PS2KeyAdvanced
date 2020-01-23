@@ -122,7 +122,7 @@ int8_t rows = 0;
 /*  messages constants */
 /* Key codes and strings for keys producing a string */
 /* three arrays in same order ( keycode, string to display, length of string ) */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
 const uint8_t codes[] PROGMEM = { PS2_KEY_SPACE, PS2_KEY_TAB, PS2_KEY_ESC, PS2_KEY_DELETE,
                                    PS2_KEY_F1, PS2_KEY_F2, PS2_KEY_F3, PS2_KEY_F4,
                                    PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7, PS2_KEY_F8,
@@ -152,7 +152,7 @@ const char *const keys[] PROGMEM =  {
 const int8_t sizes[] PROGMEM = { 1, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
 char buffer[ 8 ];
 
-#elif defined(ARDUINO_ARCH_SAM)
+#else
 const uint8_t codes[] = { PS2_KEY_SPACE, PS2_KEY_TAB, PS2_KEY_ESC,
                           PS2_KEY_DELETE, PS2_KEY_F1, PS2_KEY_F2, PS2_KEY_F3,
                           PS2_KEY_F4, PS2_KEY_F5, PS2_KEY_F6, PS2_KEY_F7,
@@ -162,9 +162,6 @@ const char *const keys[]  =  { " ", "[Tab]", "[ESC]", "[Del]", "[F1]", "[F2]", "
                                "[F4]", "[F5]", "[F6]", "[F7]", "[F8]",
                                "[F9]", "[F10]", "[F11]", "[F12]" };
 const int8_t sizes[]  = { 1, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5 };
-
-#else
-  #error “This library only supports boards with an AVR or SAM processor.”
 #endif
 
 // initialize the keyboard library with the numbers of the interface pins
@@ -187,15 +184,9 @@ lcd.begin( MAX_COL, MAX_ROW );
 lcd.clear();                      // clear the screen
 lcd.cursor();                     // Enable Cursor
 lcd.blink();                      // Blinking cursor
-#if defined(ARDUINO_ARCH_AVR)
-lcd.print( F( "PC Services" ) );  // Display sign-on text
-lcd.setCursor( 0,1 );
-lcd.print( F( "Keyboard to LCD" ) );
-#elif defined(ARDUINO_ARCH_SAM)
 lcd.print( "PC Services" );       // Display sign-on text
 lcd.setCursor( 0,1 );
 lcd.print( "Keyboard to LCD" );
-#endif
 lcd.setCursor( 12,0 );
 cols = 12;                        // update cursor position
 rows = 0;
@@ -312,16 +303,16 @@ if( keyboard.available() )
         if( c != PS2_KEY_EUROPE2 && ( c < PS2_KEY_KP0 || c >= PS2_KEY_F1 ) )
           {  // Non printable sort which ones we can print
           for( idx = 0; idx < sizeof( codes ); idx++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
           if( c == pgm_read_byte( codes + idx ) )
-#elif defined(ARDUINO_ARCH_SAM)
+#else
           if( c == codes[ idx ] )
 #endif
             {  /* String outputs */
             mode = 1;
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
             c = pgm_read_byte( sizes + idx );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
             c = sizes[ idx ];
 #endif
             cols += c - 1;
@@ -329,10 +320,10 @@ if( keyboard.available() )
             /* when cursor reset keep track */
             if( cols == 0 )
               cols = c;
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
             strcpy_P( buffer, (char*)pgm_read_word( &( keys[ idx ] ) ) );
             lcd.print( buffer );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
             lcd.print( keys[ idx ] );
 #endif
             cols++;

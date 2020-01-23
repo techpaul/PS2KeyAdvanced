@@ -144,9 +144,9 @@ void set_lock( );
 
 /* Constant control functions to flags array
    in translated key code value order  */
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
 const uint8_t PROGMEM control_flags[] = {
-#elif defined(ARDUINO_ARCH_SAM)
+#else
 const uint8_t control_flags[] = {
 #endif
                 _SHIFT, _SHIFT, _CTRL, _CTRL,
@@ -291,8 +291,9 @@ else
                   _ps2mode &= ~_PS2_BUSY;
                   send_next();              // Check for more to send
                   }
-             }
-             // fall through to default
+              }
+            _bitcount = 0;	            // end of byte
+            break;
     default: // in case of weird error and end of byte reception resync
             _bitcount = 0;
     }
@@ -439,7 +440,8 @@ switch( _bitcount )
             _tx_ready &= ~_COMMAND;
           if( !( _ps2mode & _WAIT_RESPONSE ) )   //  if not wait response
             send_next();                    // check anything else to queue up
-          // fall through to default
+          _bitcount = 0;	            // end of byte
+          break;
   default: // in case of weird error and end of byte reception re-sync
           _bitcount = 0;
   }
@@ -669,11 +671,11 @@ if( index & _E0_MODE )
   {
   length = sizeof( extended_key ) / sizeof( extended_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
      if( data == pgm_read_byte( &extended_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &extended_key[ index ][ 1 ] );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
      if( data == extended_key[ index ][ 0 ] )
        {
        retdata = extended_key[ index ][ 1 ];
@@ -685,11 +687,11 @@ else
   {
   length = sizeof( single_key ) / sizeof( single_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
      if( data == pgm_read_byte( &single_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &single_key[ index ][ 1 ] );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
      if( data == single_key[ index ][ 0 ] )
        {
        retdata = single_key[ index ][ 1 ];
@@ -746,9 +748,9 @@ if( retdata > 0 )
   else
     if( retdata >= PS2_KEY_L_SHIFT && retdata <= PS2_KEY_R_GUI )
       { // Update bits for _SHIFT, _CTRL, _ALT, _ALT GR, _GUI in status
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
       index = pgm_read_byte( &control_flags[ retdata - PS2_KEY_L_SHIFT ] );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
       index = control_flags[ retdata - PS2_KEY_L_SHIFT ];
 #endif
       if( PS2_keystatus & _BREAK )
@@ -764,9 +766,9 @@ if( retdata > 0 )
       // Numeric keypad ONLY works in numlock state or when _SHIFT status
       if( retdata >= PS2_KEY_KP0 && retdata <=  PS2_KEY_KP_DOT )
         if( !( PS2_led_lock & PS2_LOCK_NUM ) || ( PS2_keystatus & _SHIFT ) )
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(PS2_REQUIRES_PROGMEM)
           retdata = pgm_read_byte( &scroll_remap[ retdata - PS2_KEY_KP0 ] );
-#elif defined(ARDUINO_ARCH_SAM)
+#else
           retdata = scroll_remap[ retdata - PS2_KEY_KP0 ];
 #endif
   // Sort break code handling or ignore for all having processed the _SHIFT etc status

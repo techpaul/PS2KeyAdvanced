@@ -144,11 +144,7 @@ void setup()
 // Configure the keyboard library
 keyboard.begin( DATAPIN, IRQPIN );
 Serial.begin( 115200 );
-#if defined(ARDUINO_ARCH_AVR)
-Serial.println( F( "PS2 Advanced Key Simple Test:" ) );
-#elif defined(ARDUINO_ARCH_SAM)
 Serial.println( "PS2 Advanced Key Simple Test:" );
-#endif
 }
 
 
@@ -160,19 +156,11 @@ if( keyboard.available() )
   c = keyboard.read();
   if( c > 0 )
     {
-#if defined(ARDUINO_ARCH_AVR)
-    Serial.print( F( "Value " ) );
-    Serial.print( c, HEX );
-    Serial.print( F( " - Status Bits " ) );
-    Serial.print( c >> 8, HEX );
-    Serial.print( F( "  Code " ) );
-#elif defined(ARDUINO_ARCH_SAM)
     Serial.print( "Value " );
     Serial.print( c, HEX );
     Serial.print( " - Status Bits " );
     Serial.print( c >> 8, HEX );
     Serial.print( "  Code " );
-#endif
     Serial.println( c & 0xFF, HEX );
     }
   }

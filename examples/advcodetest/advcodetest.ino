@@ -154,11 +154,7 @@ PS2KeyAdvanced keyboard;
 void setup()
 {
 Serial.begin( 115200 );
-#if defined(ARDUINO_ARCH_AVR)
-  Serial.println( F( "PS2 Advanced Key - Advanced Test:" ) );
-#elif defined(ARDUINO_ARCH_SAM)
-  Serial.println( "PS2 Advanced Key - Advanced Test:" );
-#endif
+Serial.println( "PS2 Advanced Key - Advanced Test:" );
 
 // Configure the keyboard library
 keyboard.begin( DATAPIN, IRQPIN );
@@ -166,11 +162,7 @@ keyboard.echo();              // ping keyboard to see if there
 delay( 6 );
 c = keyboard.read();
 if( (c & 0xFF) == PS2_KEY_ECHO )
-#if defined(ARDUINO_ARCH_AVR)
-  Serial.println( F( "Keyboard OK.." ) );
-#elif defined(ARDUINO_ARCH_SAM)
   Serial.println( "Keyboard OK.." );
-#endif
 }
 
 
@@ -187,70 +179,38 @@ if( keyboard.available() )
     switch( c & 0xFF )
       {
       case PS2_KEY_R:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.println( F( "Reset" ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.println( "Reset" );
-#endif
                    keyboard.resetKey();  // Reset keyboard
                    break;
       case PS2_KEY_S:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.println( F( "Get Scancode set in use" ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.println( "Get Scancode set in use" );
-#endif
                    keyboard.getScanCodeSet();  // Get which scan code set
                    break;
       case PS2_KEY_G:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.print( F( "Get current lock status = " ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.print( "Get current lock status = " );
-#endif
                    c = keyboard.getLock();  // Get current lock status
                    Serial.println( c, HEX );
                    break;
       case PS2_KEY_I:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.println( F( "Read ID code" ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.println( "Read ID code" );
-#endif
                    keyboard.readID();  // Get which scan code set
                    break;
       case PS2_KEY_E:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.println( F( "Echo" ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.println( "Echo" );
-#endif
                    keyboard.echo();  // Get which scan code set
                    break;
       case PS2_KEY_T:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.println( F( "Typematic Rate" ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.println( "Typematic Rate" );
-#endif
                    keyboard.typematic( 31, 3);  // Get slowest
                    break;
       case PS2_KEY_B:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.print( F( "No Break Codes " ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.print( "No Break Codes " );
-#endif
                    breaks ^= 1;;
                    Serial.println( breaks );
                    keyboard.setNoBreak( breaks );  // set break mode
                    break;
       case PS2_KEY_N:
-#if defined(ARDUINO_ARCH_AVR)
-                   Serial.print( F( "No Repeat Makes for CTRL... " ) );
-#elif defined(ARDUINO_ARCH_SAM)
                    Serial.print( "No Repeat Makes for CTRL... " );
-#endif
                    repeats ^= 1;
                    Serial.println( repeats );
                    keyboard.setNoRepeat( repeats );  // Set repeat modet

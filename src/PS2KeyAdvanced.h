@@ -135,6 +135,19 @@
 #define PS2KeyAdvanced_h
 #include "Arduino.h"
 
+// Platform specific areas
+// Harvard architecture settings for PROGMEM
+// Add separate for EACH architecture as easier to maintain
+// AVR
+#if defined(ARDUINO_ARCH_AVR)
+#define PS2_REQUIRES_PROGMEM    1
+#endif
+
+// Invalid architecture
+#if !( defined( ARDUINO_ARCH_AVR ) || defined( ARDUINO_ARCH_SAM ) )
+#warning Library is not supported on this board Use at own risk
+#endif
+
 /* Flags/bit masks for status bits in returned unsigned int value */
 #define PS2_BREAK   0x8000
 #define PS2_SHIFT   0x4000
