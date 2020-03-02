@@ -1,4 +1,4 @@
-/* Version V1.0.5
+/* Version V1.0.7
   PS2KeyCode.h - PS2KeyAdvanced library Internal actual PS2 key code sequences
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>

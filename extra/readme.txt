@@ -3,6 +3,7 @@
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
   Created September 2014
   Updated January 2016
+  Updated February 2020
 
   This is for a LATIN style keyboard.
 
@@ -41,9 +42,10 @@
 
    extras folder
     codes.txt       The literals (constants) you can use to match codes returned
+    PS2 Keyboard.pdf Copy of Website explaining PS2 Protocol
     readme.txt      this file
     websites.txt    Other websites about PS2 keyboard and UTF-8 character encoding
-    Iamges          folder containg images for a single NUMLOCK keypress and what
+    Images          folder containing images for a single NUMLOCK keypress and what
                     happens on the wires.
 
    src folder
@@ -175,5 +177,5 @@ For LEDs command use the following defines added together to set them
 
 Paul Carpenter
 PC Services
-January 2016
+February 2020
 http://www.pcserviceselectronics.co.uk

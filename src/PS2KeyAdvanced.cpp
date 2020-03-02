@@ -1,4 +1,4 @@
-/* Version V1.0.6
+/* Version V1.0.7
   PS2KeyAdvanced.cpp - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
@@ -6,6 +6,8 @@
   Updated January 2016 - Paul Carpenter - add tested on Due and tidy ups for V1.5 Library Management
     January 2020   Fix typos, correct keyboard reset status improve library.properties 
 		   and additional platform handling and some documentation
+    March 2020  Add SAMD1 as recognised support as has been tested by user
+                Improve different architecture handling
 
   IMPORTANT WARNING
  
@@ -127,6 +129,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include <Arduino.h>
 // Internal headers for library defines/codes/etc
 #include "PS2KeyAdvanced.h"
 #include "PS2KeyCode.h"
@@ -144,7 +147,7 @@ void set_lock( );
 
 /* Constant control functions to flags array
    in translated key code value order  */
-#if defined(PS2_REQUIRES_PROGMEM)
+#if defined( PS2_REQUIRES_PROGMEM )
 const uint8_t PROGMEM control_flags[] = {
 #else
 const uint8_t control_flags[] = {
@@ -169,12 +172,12 @@ volatile uint16_t _rx_buffer[ _RX_BUFFER_SIZE ];     // buffer for data from key
 volatile uint8_t _head;              // _head = last byte written
 uint8_t _tail;                       // _tail = last byte read (not modified in IRQ ever)
 volatile int8_t _bytes_expected;
-volatile uint8_t _bitcount;          // Main state variable and bit count for ints
+volatile uint8_t _bitcount;          // Main state variable and bit count for interrupts
 volatile uint8_t _shiftdata;
 volatile uint8_t _parity;
 
 /* TX variables */
-volatile uint8_t _tx_buff[ _TX_BUFFER_SIZE ];    // buffer for keyboard commans
+volatile uint8_t _tx_buff[ _TX_BUFFER_SIZE ];    // buffer for keyboard commands
 volatile uint8_t _tx_head;          // buffer write pointer
 volatile uint8_t _tx_tail;          // buffer read pointer
 volatile uint8_t _last_sent;        // last byte if resend requested
@@ -206,12 +209,12 @@ uint8_t PS2_keystatus;        // current CAPS etc status for top byte
 
 /* The ISR for the external interrupt
    To receive 11 bits - start 8 data, ODD parity, stop
-   To send data calls send_bit()
+   To send data calls send_bit( )
    Interrupt every falling incoming clock edge from keyboard */
 void ps2interrupt( void )
 {
 if( _ps2mode & _TX_MODE )
-  send_bit();
+  send_bit( );
 else
   {
   static uint32_t prev_ms = 0;
@@ -220,7 +223,7 @@ else
 
   val = digitalRead( PS2_DataPin );
   /* timeout catch for glitches reset everything */
-  now_ms = millis();
+  now_ms = millis( );
   if( now_ms - prev_ms > 250 )
     {
     _bitcount = 0;
@@ -289,12 +292,12 @@ else
                   _ps2mode &= ~( _E0_MODE + _E1_MODE + _WAIT_RESPONSE + _BREAK_KEY );
                   _bytes_expected = 0;
                   _ps2mode &= ~_PS2_BUSY;
-                  send_next();              // Check for more to send
+                  send_next( );              // Check for more to send
                   }
               }
             _bitcount = 0;	            // end of byte
             break;
-    default: // in case of weird error and end of byte reception resync
+    default: // in case of weird error and end of byte reception re-sync
             _bitcount = 0;
     }
   }
@@ -309,7 +312,8 @@ else
             0x04 save value ( complete after translation )
             0x02 decrement count of bytes to expected
 
-   Codes like EE, AA and FC ( Echo, BAT pass and fail) treated as valid codes code 6
+   Codes like EE, AA and FC ( Echo, BAT pass and fail) treated as valid codes 
+   return code 6
 */
 uint8_t decode_key( uint8_t value )
 {
@@ -402,9 +406,12 @@ uint8_t val;
 _bitcount++;               // Now point to next bit
 switch( _bitcount )
   {
-  case 1: // Start bit due to Arduino bug
-          digitalWrite( PS2_DataPin, ( LOW ) );
+  case 1: 
+#if defined( PS2_CLEAR_PENDING_IRQ ) 
+          // Start bit due to Arduino bug
+          digitalWrite( PS2_DataPin, LOW );
           break;
+#endif
   case 2:
   case 3:
   case 4:
@@ -439,7 +446,7 @@ switch( _bitcount )
           else                              // else we finished a command
             _tx_ready &= ~_COMMAND;
           if( !( _ps2mode & _WAIT_RESPONSE ) )   //  if not wait response
-            send_next();                    // check anything else to queue up
+            send_next( );                    // check anything else to queue up
           _bitcount = 0;	            // end of byte
           break;
   default: // in case of weird error and end of byte reception re-sync
@@ -463,7 +470,11 @@ void send_now( uint8_t command )
 {
 _shiftdata = command;
 _now_send = command;     // copy for later to save in last sent
-_bitcount = 0;
+#if defined( PS2_CLEAR_PENDING_IRQ ) 
+_bitcount = 0;          // AVR/SAM ignore extra interrupt
+#else
+_bitcount = 1;          // Normal processors
+#endif
 _parity = 0;
 _ps2mode |= _TX_MODE + _PS2_BUSY;
 
@@ -491,7 +502,7 @@ digitalWrite( PS2_IrqPin, LOW );
 delayMicroseconds( 60 );
 // Set data low - Start bit
 digitalWrite( PS2_DataPin, LOW );
-// set clock to input_pullup data stays as output while writing to  keyboard
+// set clock to input_pullup data stays output while writing to keyboard
 pininput( PS2_IrqPin );
 // Restart interrupt handler
 attachInterrupt( digitalPinToInterrupt( PS2_IrqPin ), ps2interrupt, FALLING );
@@ -606,11 +617,12 @@ _head = 0;
 _tail = 0;
 _bitcount = 0;
 PS2_keystatus = 0;
+PS2_led_lock = 0;
 _ps2mode = 0;
 }
 
 
-uint8_t key_available()
+uint8_t key_available( )
 {
 int8_t  i;
 
@@ -671,7 +683,7 @@ if( index & _E0_MODE )
   {
   length = sizeof( extended_key ) / sizeof( extended_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(PS2_REQUIRES_PROGMEM)
+#if defined( PS2_REQUIRES_PROGMEM )
      if( data == pgm_read_byte( &extended_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &extended_key[ index ][ 1 ] );
@@ -687,7 +699,7 @@ else
   {
   length = sizeof( single_key ) / sizeof( single_key[ 0 ] );
   for( index = 0; index < length; index++ )
-#if defined(PS2_REQUIRES_PROGMEM)
+#if defined( PS2_REQUIRES_PROGMEM )
      if( data == pgm_read_byte( &single_key[ index ][ 0 ] ) )
        {
        retdata = pgm_read_byte( &single_key[ index ][ 1 ] );
@@ -748,7 +760,7 @@ if( retdata > 0 )
   else
     if( retdata >= PS2_KEY_L_SHIFT && retdata <= PS2_KEY_R_GUI )
       { // Update bits for _SHIFT, _CTRL, _ALT, _ALT GR, _GUI in status
-#if defined(PS2_REQUIRES_PROGMEM)
+#if defined( PS2_REQUIRES_PROGMEM )
       index = pgm_read_byte( &control_flags[ retdata - PS2_KEY_L_SHIFT ] );
 #else
       index = control_flags[ retdata - PS2_KEY_L_SHIFT ];
@@ -766,7 +778,7 @@ if( retdata > 0 )
       // Numeric keypad ONLY works in numlock state or when _SHIFT status
       if( retdata >= PS2_KEY_KP0 && retdata <=  PS2_KEY_KP_DOT )
         if( !( PS2_led_lock & PS2_LOCK_NUM ) || ( PS2_keystatus & _SHIFT ) )
-#if defined(PS2_REQUIRES_PROGMEM)
+#if defined( PS2_REQUIRES_PROGMEM )
           retdata = pgm_read_byte( &scroll_remap[ retdata - PS2_KEY_KP0 ] );
 #else
           retdata = scroll_remap[ retdata - PS2_KEY_KP0 ];
@@ -792,7 +804,7 @@ send_byte( PS2_KC_LOCK );        // send command
 send_byte( PS2_KEY_IGNORE );     // wait ACK
 send_byte( PS2_led_lock );       // send data from internal variable
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait ACK
-  send_next();              // if idle start transmission
+  send_next( );              // if idle start transmission
 }
 
 
@@ -802,7 +814,7 @@ void PS2KeyAdvanced::echo( void )
 {
 send_byte( PS2_KC_ECHO );             // send command
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data PS2_KC_ECHO
-  send_next();                   // if idle start transmission
+  send_next( );                   // if idle start transmission
 }
 
 
@@ -814,7 +826,7 @@ send_byte( PS2_KC_READID );           // send command
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 send_byte( PS2_KEY_IGNORE );          // wait data
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data
-  send_next();                   // if idle start transmission
+  send_next( );                   // if idle start transmission
 }
 
 
@@ -827,12 +839,12 @@ send_byte( PS2_KEY_IGNORE );          // wait ACK
 send_byte( 0 );                       // send data 0 = read
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data
-  send_next();                   // if idle start transmission
+  send_next( );                   // if idle start transmission
 }
 
 
 /* Returns the current status of Locks */
-uint8_t PS2KeyAdvanced::getLock()
+uint8_t PS2KeyAdvanced::getLock( )
 {
 return( PS2_led_lock );
 }
@@ -870,12 +882,12 @@ _mode |= data ? _NO_REPEATS : 0;
 
 /* Resets keyboard when reset has completed
    keyboard sends AA - Pass or FC for fail        */
-void PS2KeyAdvanced::resetKey()
+void PS2KeyAdvanced::resetKey( )
 {
 send_byte( PS2_KC_RESET );            // send command
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait data PS2_KC_BAT or PS2_KC_ERROR
-  send_next();                        // if idle start transmission
+  send_next( );                        // if idle start transmission
 // LEDs and KeyStatus Reset too... to match keyboard
 PS2_led_lock = 0;
 PS2_keystatus = 0;
@@ -891,7 +903,7 @@ PS2_keystatus = 0;
         default in keyboard is 1 = 0.5 second delay
     Returned data in keyboard buffer read as keys
 
-    Error returns 0 ok
+    Error returns 0 OK
                 -5 parameter error
                 */
 int PS2KeyAdvanced::typematic( uint8_t rate, uint8_t delay )
@@ -902,7 +914,7 @@ send_byte( PS2_KC_RATE );             // send command
 send_byte( PS2_KEY_IGNORE );          // wait ACK
 send_byte( ( delay << 5 ) + rate );   // Send values
 if( ( send_byte( PS2_KEY_IGNORE ) ) ) // wait ACK
-  send_next();                   // if idle start transmission
+  send_next( );                   // if idle start transmission
 return 0;
 }
 
@@ -920,7 +932,7 @@ return 0;
 
   As with other ring buffers here when pointers match
   buffer empty so cannot actually hold buffer size values  */
-uint8_t PS2KeyAdvanced::available()
+uint8_t PS2KeyAdvanced::available( )
 {
 int8_t  i, idx;
 uint16_t data;
@@ -930,9 +942,9 @@ i = _key_head - _key_tail;
 if( i < 0 )
   i += _KEY_BUFF_SIZE;
 while( i < ( _KEY_BUFF_SIZE - 1 ) ) // process if not full
-  if( key_available() )         // not check for more keys to process
+  if( key_available( ) )         // not check for more keys to process
     {
-    data = translate();         // get next translated key
+    data = translate( );         // get next translated key
     if( data == 0 )             // unless in buffer is empty
       break;
     if( ( data & 0xFF ) != PS2_KEY_IGNORE
@@ -954,17 +966,14 @@ return uint8_t( i );
 
 /* read a decoded key from the keyboard buffer
    returns 0 for empty buffer */
-uint16_t PS2KeyAdvanced::read()
+uint16_t PS2KeyAdvanced::read( )
 {
 uint16_t result;
 uint8_t idx;
 
-if( ( result = available() ) )
+if( ( result = available( ) ) )
   {
   idx = _key_tail;
-  // check for empty buffer
-  if( idx == _key_head )
-    return -2;
   idx++;
   if( idx >= _KEY_BUFF_SIZE )  // loop to front if necessary
     idx = 0;
@@ -975,9 +984,9 @@ return result;
 }
 
 
-PS2KeyAdvanced::PS2KeyAdvanced()
+PS2KeyAdvanced::PS2KeyAdvanced( )
 {
-// nothing to do here, begin() does it all
+// nothing to do here, begin( ) does it all
 }
 
 

@@ -55,7 +55,7 @@
    Clock pin from PS2 keyboard MUST be connected to an interrupt
    pin, these vary with the different types of Arduino
 
-  PS2KeyAdvanced requires both pins specified for begin()
+  PS2KeyAdvanced requires both pins specified for begin( )
 
   keyboard.begin( data_pin, irq_pin );
 
@@ -151,27 +151,36 @@ uint8_t repeats = 0;
 PS2KeyAdvanced keyboard;
 
 
-void setup()
+void setup( )
 {
 Serial.begin( 115200 );
 Serial.println( "PS2 Advanced Key - Advanced Test:" );
 
 // Configure the keyboard library
 keyboard.begin( DATAPIN, IRQPIN );
-keyboard.echo();              // ping keyboard to see if there
+keyboard.echo( );              // ping keyboard to see if there
 delay( 6 );
-c = keyboard.read();
-if( (c & 0xFF) == PS2_KEY_ECHO )
-  Serial.println( "Keyboard OK.." );
+c = keyboard.read( );
+if( (c & 0xFF) == PS2_KEY_ECHO 
+    || (c & 0xFF) == PS2_KEY_BAT )
+  Serial.println( "Keyboard OK.." );    // Response was Echo or power up
+else
+  if( ( c & 0xFF ) == 0 )
+    Serial.println( "Keyboard Not Found" );
+  else
+    {
+    Serial.print( "Invalid Code received of " );
+    Serial.println( c, HEX );
+    }
 }
 
 
-void loop()
+void loop( )
 {
-if( keyboard.available() )
+if( keyboard.available( ) )
   {
   // read the next key
-  c = keyboard.read();
+  c = keyboard.read( );
   if( ( c & 0xFF ) > 0 )
     Serial.println( c , HEX );
   /* now do something with keys entered results on serial monitor */
@@ -180,24 +189,24 @@ if( keyboard.available() )
       {
       case PS2_KEY_R:
                    Serial.println( "Reset" );
-                   keyboard.resetKey();  // Reset keyboard
+                   keyboard.resetKey( );  // Reset keyboard
                    break;
       case PS2_KEY_S:
                    Serial.println( "Get Scancode set in use" );
-                   keyboard.getScanCodeSet();  // Get which scan code set
+                   keyboard.getScanCodeSet( );  // Get which scan code set
                    break;
       case PS2_KEY_G:
                    Serial.print( "Get current lock status = " );
-                   c = keyboard.getLock();  // Get current lock status
+                   c = keyboard.getLock( );  // Get current lock status
                    Serial.println( c, HEX );
                    break;
       case PS2_KEY_I:
                    Serial.println( "Read ID code" );
-                   keyboard.readID();  // Get which scan code set
+                   keyboard.readID( );  // Get which scan code set
                    break;
       case PS2_KEY_E:
                    Serial.println( "Echo" );
-                   keyboard.echo();  // Get which scan code set
+                   keyboard.echo( );
                    break;
       case PS2_KEY_T:
                    Serial.println( "Typematic Rate" );
@@ -213,7 +222,7 @@ if( keyboard.available() )
                    Serial.print( "No Repeat Makes for CTRL... " );
                    repeats ^= 1;
                    Serial.println( repeats );
-                   keyboard.setNoRepeat( repeats );  // Set repeat modet
+                   keyboard.setNoRepeat( repeats );  // Set repeat mode
                    break;
       }
   }

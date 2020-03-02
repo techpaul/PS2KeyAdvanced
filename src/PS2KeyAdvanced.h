@@ -1,4 +1,4 @@
-/* Version V1.0.6
+/* Version V1.0.7
   PS2KeyAdvanced.h - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
@@ -6,6 +6,8 @@
   Updated January 2016 - Paul Carpenter - add tested on Due and tidy ups for V1.5 Library Management
     January 2020   Fix typos, correct keyboard reset status improve library.properties 
 		   and additional platform handling and some documentation
+    March 2020  Add SAMD1 as recognised support as has been tested by user
+                Improve different architecture handling
 
   IMPORTANT WARNING
  
@@ -130,22 +132,32 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 #ifndef PS2KeyAdvanced_h
 #define PS2KeyAdvanced_h
-#include "Arduino.h"
 
 // Platform specific areas
 // Harvard architecture settings for PROGMEM
 // Add separate for EACH architecture as easier to maintain
-// AVR
-#if defined(ARDUINO_ARCH_AVR)
+// AVR (includes Teensy 2.0)
+#if defined( ARDUINO_ARCH_AVR )
+#define PS2_SUPPORTED           1
 #define PS2_REQUIRES_PROGMEM    1
+#define PS2_CLEAR_PENDING_IRQ   1
 #endif
-
+// SAM
+#if defined( ARDUINO_ARCH_SAM )
+#define PS2_SUPPORTED           1
+#define PS2_CLEAR_PENDING_IRQ   1
+#endif
+// SAMD1
+#if defined( ARDUINO_ARCH_SAMD1 )
+#define PS2_SUPPORTED           1
+#define PS2_CLEAR_PENDING_IRQ   1
+#endif
+ 
 // Invalid architecture
-#if !( defined( ARDUINO_ARCH_AVR ) || defined( ARDUINO_ARCH_SAM ) )
-#warning Library is not supported on this board Use at own risk
+#if !( defined( PS2_SUPPORTED ) )
+#warning Library is NOT supported on this board Use at your OWN risk
 #endif
 
 /* Flags/bit masks for status bits in returned unsigned int value */
@@ -350,25 +362,25 @@ class PS2KeyAdvanced {
   public:
   	/* This constructor does basically nothing. Please call the begin(int,int)
   	   method before using any other method of this class. 	 */
-    PS2KeyAdvanced();
+    PS2KeyAdvanced( );
 
     /* Starts the keyboard "service" by registering the external interrupt.
        setting the pin modes correctly and driving those needed to high.
        Sets default LOCK status (LEDs) to passed in value or default of all off
        The best place to call this method is in the setup routine.    */
-    void begin( uint8_t, uint8_t  );
+    void begin( uint8_t, uint8_t );
 
     /* Returns number of codes available or 0 for none */
-    uint8_t available();
+    uint8_t available( );
 
     /* Returns the key last read from the keyboard.
        If there is no key available, 0 is returned.  */
-    uint16_t read();
+    uint16_t read( );
 
     /* Returns the current status of Locks
         Use Macro to mask out bits from
         PS2_LOCK_NUM    PS2_LOCK_CAPS   PS2_LOCK_SCROLL */
-    uint8_t getLock();
+    uint8_t getLock( );
 
     /* Sets the current status of Locks and LEDs
        Use macro defines added together from
@@ -388,7 +400,7 @@ class PS2KeyAdvanced {
     /* Resets keyboard when reset has completed
        keyboard sends AA - Pass or FC for fail
        Read from keyboard data buffer */
-    void resetKey();
+    void resetKey( );
 
     /*  Get the current Scancode Set used in keyboard
         returned data in keyboard buffer read as keys */

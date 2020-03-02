@@ -139,7 +139,7 @@ uint16_t c;
 PS2KeyAdvanced keyboard;
 
 
-void setup()
+void setup( )
 {
 // Configure the keyboard library
 keyboard.begin( DATAPIN, IRQPIN );
@@ -148,12 +148,12 @@ Serial.println( "PS2 Advanced Key Simple Test:" );
 }
 
 
-void loop()
+void loop( )
 {
-if( keyboard.available() )
+if( keyboard.available( ) )
   {
   // read the next key
-  c = keyboard.read();
+  c = keyboard.read( );
   if( c > 0 )
     {
     Serial.print( "Value " );
