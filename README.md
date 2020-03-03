@@ -1,6 +1,6 @@
 # PS2KeyAdvanced
 ## Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
-**V1.0.7** February 2020 - Add notes for porting to other platforms
+**V1.0.7** March 2020 - Add notes for porting to other platforms, tidy ups, add SAMD1
 
 V1.0.6 January 2020 - Fix typos, correct keyboard reset status improve library.properties 
 		   and additional reduction for easier platform handling
@@ -19,14 +19,15 @@ For other versions that just read the keycodes for all keyboard types or allow y
 
 -  Arduino AVR - tested on Uno and Mega 2560 (Users have tested on Teensy 2.0 and Teensy++ 2.0)
 -  Arduino SAM - tested on DUE
+-  SAMD1 - Seeeduino Xiao M0+ (tested by user)
 
 See later for porting to other platforms
 
 ### Test Environment
 
-    All platforms versions of test R3 Hardware
+    All Arduino platforms versions of test R3 Hardware
     Arduino V1.6.7 and newer
-    DUE Board Manager package V1.6.6
+    DUE Board Manager package V1.6.6 or higher
 
 ## Important Hardware Notes
 
