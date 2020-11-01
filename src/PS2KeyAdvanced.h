@@ -155,6 +155,11 @@
 #define PS2_CLEAR_PENDING_IRQ   1
 #endif
  
+#if defined( ARDUINO_ARCH_STM32 )
+#define PS2_SUPPORTED           1
+#define PS2_CLEAR_PENDING_IRQ   1
+#endif
+
 // Invalid architecture
 #if !( defined( PS2_SUPPORTED ) )
 #warning Library is NOT supported on this board Use at your OWN risk
