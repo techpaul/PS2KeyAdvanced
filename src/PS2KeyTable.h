@@ -1,4 +1,4 @@
-/* Version V1.0.7
+/* Version V1.0.8
   PS2KeyTable.h - PS2KeyAdvanced library keycode values to return values
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>

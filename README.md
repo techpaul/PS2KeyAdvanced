@@ -1,6 +1,9 @@
 # PS2KeyAdvanced
 ## Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
-**V1.0.7** March 2020 - Add notes for porting to other platforms, tidy ups, add SAMD1
+**V1.0.8** November 2020 - Add support for STM32 from user Hiabuto-de
+                  Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M
+
+V1.0.7 March 2020 - Add notes for porting to other platforms, tidy ups, add SAMD1
 
 V1.0.6 January 2020 - Fix typos, correct keyboard reset status improve library.properties 
 		   and additional reduction for easier platform handling
@@ -20,6 +23,7 @@ For other versions that just read the keycodes for all keyboard types or allow y
 -  Arduino AVR - tested on Uno and Mega 2560 (Users have tested on Teensy 2.0 and Teensy++ 2.0)
 -  Arduino SAM - tested on DUE
 -  SAMD1 - Seeeduino Xiao M0+ (tested by user)
+-  STM32 - STM32Duino-Framework and PlatformIO on STM32F103C8T6 from user Hiabuto-de
 
 See later for porting to other platforms
 

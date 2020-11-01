@@ -1,4 +1,4 @@
-/* Version V1.0.7
+/* Version V1.0.8
   PS2KeyAdvanced.cpp - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
@@ -8,6 +8,8 @@
 		   and additional platform handling and some documentation
     March 2020  Add SAMD1 as recognised support as has been tested by user
                 Improve different architecture handling
+    November 2020 Add support for STM32 from user Hiabuto-de
+                  Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M
 
   IMPORTANT WARNING
  
