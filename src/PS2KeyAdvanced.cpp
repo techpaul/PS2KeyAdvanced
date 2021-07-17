@@ -1,4 +1,4 @@
-/* Version V1.0.8
+/* Version V1.0.9
   PS2KeyAdvanced.cpp - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
@@ -10,6 +10,7 @@
                 Improve different architecture handling
     November 2020 Add support for STM32 from user Hiabuto-de
                   Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M
+    July 2021   Add workaround for ESP32 issue with Silicon (hardware) from user submissions
 
   IMPORTANT WARNING
  
@@ -215,6 +216,11 @@ uint8_t PS2_keystatus;        // current CAPS etc status for top byte
    Interrupt every falling incoming clock edge from keyboard */
 void ps2interrupt( void )
 {
+// Workaround for ESP32 SILICON error see extra/Porting.md
+#ifdef PS2_ONLY_CHANGE_IRQ
+if( digitalRead( PS2_IrqPin ) )
+   return;
+#endif
 if( _ps2mode & _TX_MODE )
   send_bit( );
 else

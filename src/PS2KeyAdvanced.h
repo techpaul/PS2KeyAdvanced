@@ -1,4 +1,4 @@
-/* Version V1.0.8
+/* Version V1.0.9
   PS2KeyAdvanced.h - PS2KeyAdvanced library
   Copyright (c) 2007 Free Software Foundation.  All right reserved.
   Written by Paul Carpenter, PC Services <sales@pcserviceselectronics.co.uk>
@@ -10,6 +10,7 @@
                 Improve different architecture handling
     November 2020 Add support for STM32 from user Hiabuto-de
                   Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M
+    July 2021   Add workaround for ESP32 issue with Silicon (hardware) from user submissions
 
   IMPORTANT WARNING
  
@@ -146,7 +147,7 @@
 #define PS2_REQUIRES_PROGMEM    1
 #define PS2_CLEAR_PENDING_IRQ   1
 #endif
-// SAM
+// SAM (Due)
 #if defined( ARDUINO_ARCH_SAM )
 #define PS2_SUPPORTED           1
 #define PS2_CLEAR_PENDING_IRQ   1
@@ -156,10 +157,15 @@
 #define PS2_SUPPORTED           1
 #define PS2_CLEAR_PENDING_IRQ   1
 #endif
- 
+// STM32
 #if defined( ARDUINO_ARCH_STM32 )
 #define PS2_SUPPORTED           1
 #define PS2_CLEAR_PENDING_IRQ   1
+#endif
+// ESP32
+#if defined( ARDUINO_ARCH_ESP32 )
+#define PS2_SUPPORTED           1
+#define PS2_ONLY_CHANGE_IRQ     1
 #endif
 
 // Invalid architecture
