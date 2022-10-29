@@ -12,9 +12,9 @@ for multimedia keys and Function keys F1 to F24 (yes that is F24).
 
 PS2 keyboard spec specifies THREE Scan Code Sets, however **ONLY SET 2 IS GUARANTEED**.
 
-Scan Code Set 1 is the old XT mode rarely  available on keyboards
-Scan Code Set 2 is the **default** Scan Code Set guaranteed to work
-Scan Code Set 3 is even rarer to find keyboards that support it. Long abandoned by manufacturers.
+-  Scan Code Set 1 is the old XT mode rarely  available on keyboards
+-  Scan Code Set 2 is the **default** Scan Code Set guaranteed to work
+-  Scan Code Set 3 is even rarer to find keyboards that support it. Long abandoned by manufacturers.
 
 **This library ONLY supports Scan Code Set 2**
 
