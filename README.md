@@ -1,12 +1,22 @@
 # PS2KeyAdvanced
 ## Arduino PS2 Keyboard FULL keyboard protocol support and full keys to integer coding
-**V1.0.9** July 2021 - Add ESP32 support from user submissions
+**V1.0.10** October 2021 - Fix PS2_KEY_PAUSE value and RX/TX barrier on _PS2_BUSY on transmissions
 
 Smaller footprint than any others found and more functionality.
 
 For other versions that just read the keycodes for all keyboard types or allow you to get the full UTF-8 configurable for any LATIN keyboard with 
-extra functions keys as simple codes see associated repositories for PS2KeyAdvanced and PS2KeyMap libraries. Yes these libraries even provide codes 
+extra functions keys as simple codes see associated repository for [PS2KeyMap library](https://github.com/techpaul/PS2KeyMap). Yes these libraries even provide codes 
 for multimedia keys and Function keys F1 to F24 (yes that is F24).
+
+### IMPORTANT NOTE ON SCAN CODE SETS
+
+PS2 keyboard spec specifies THREE Scan Code Sets, however **ONLY SET 2 IS GUARANTEED**.
+
+Scan Code Set 1 is the old XT mode rarely  available on keyboards
+Scan Code Set 2 is the **default** Scan Code Set guaranteed to work
+Scan Code Set 3 is even rarer to find keyboards that support it. Long abandoned by manufacturers.
+
+**This library ONLY supports Scan Code Set 2**
 
 ### Platforms known to have been tested on
 
@@ -66,20 +76,20 @@ Returns any keypress as 16 bit integer, which includes a coded value for the key
 
 Fully featured PS2 keyboard library to provide
 
-    - All keys have a keycode (ESC, A-Z and 0-9 as ASCII equivalents)
-    - All function (F1 to F24), multimedia and movement keys supported
-    - Parity checking of data sent/received
-    - Resends data and requests resends when needed
-    - Functions for get and/or set of
+   - All keys have a keycode (ESC, A-Z and 0-9 as ASCII equivalents)
+   - All function (F1 to F24), multimedia and movement keys supported
+   - Parity checking of data sent/received
+   - Resends data and requests resends when needed
+   - Functions for get and/or set of
         - Scancode set in use
         - LED and LOCK control
         - ReadID
         - Reset keyboard
         - Send ECHO
-    - Ignore Break codes for keys
-    - Ignore typematic repeat of CTRL, SHIFT, ALT, Num, Scroll, Caps
-    - Handles NUM, CAPS and SCROLL lock keys to LEDs
-    - Handles NUM/SCROLL internally
+   - Ignore Break codes for keys
+   - Ignore typematic repeat of CTRL, SHIFT, ALT, Num, Scroll, Caps
+   - Handles NUM, CAPS and SCROLL lock keys to LEDs
+   - Handles NUM/SCROLL internally
 
 ### Installation
 Performed by standard zip file library inclusion into Arduino IDE
@@ -107,19 +117,16 @@ This library has THREE examples, from simplest to most complex -
 ## Porting to different boards or architectures
 See document Porting.md in extra folder for hints to assist in this process
 ### Version History
-V1.0.9 July 2021 - Add ESP32 support from user submissions
 
-V1.0.8 November 2020 - Add support for STM32 from user Hiabuto-de
-                  Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M
-
-V1.0.7 March 2020 - Add notes for porting to other platforms, tidy ups, add SAMD1
-
-V1.0.6 January 2020 - Fix typos, correct keyboard reset status improve library.properties 
-		   and additional reduction for easier platform handling
-
-V1.0.4 August 2018 - Minor reduction in available() method to remove redundant extra safety checks on buffers
-
-V1.0.3 July 2018 Improved keywords file
+| Version | Date | | Description |
+|:--|:--:|---|:--|
+|V1.0.10| October 2021 | | Fix PS2_KEY_PAUSE value and RX/TX barrier on _PS2_BUSY on transmissions. |
+|V1.0.9| July 2021 | | Add ESP32 support from user submissions. See [Issue #21](https://github.com/techpaul/PS2KeyAdvanced/issues/21)|
+|V1.0.8| November 2020 | | Add support for STM32 from user Hiabuto-de. Tested on STM32Duino-Framework and PlatformIO on STM32F103C8T6 and an IBM Model M|
+|V1.0.7| March 2020 | | Add notes for porting to other platforms, tidy ups, add SAMD1|
+|V1.0.6| January 2020 | | Fix typos, correct keyboard reset status improve library.properties and additional reduction for easier platform handling|
+|V1.0.4| August 2018 | | Minor reduction in available() method to remove redundant extra safety checks on buffers|
+|V1.0.3| July 2018 | | Improved keywords file|
 
 First Public Release Version V1.0.2
 ### Contributor and Author Details
